@@ -1,27 +1,18 @@
 const express = require('express')
-const pool = require('./db')
+const bodyParser = require('body-parser')
+const routes = require('./routes')
 
 const app = express()
 
-app.get('/monsters', (request, response, next) => {
-  pool.query('SELECT * FROM monsters ORDER BY id ASC', (err, res) => {
-    if (err) next(err)
+// Middlewares
 
-    response.json(res.rows)
-  })
-})
+// -- BodyParser
+app.use(bodyParser.json())
 
-app.get('/monsters/:id', (request, response, next) => {
-  const { id } = request.params
+// -- Routes
+app.use('/', routes)
 
-  pool.query('SELECT * FROM monsters WHERE id = $1', [id], (err, res) => {
-    if (err) next(err)
-
-    response.json(res.rows)
-  })
-})
-
-// Error-handler Middleware
+// -- Error Handler
 app.use((err, req, res, next) => {
   res.json(err)
 })
